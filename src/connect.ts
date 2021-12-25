@@ -4,10 +4,10 @@ import * as dotenv from "dotenv"
 (async () => {
         // .env読み込み
         dotenv.config();
-        const baseUrl = `${process.env.BASE_URL}`
-        const browserUrl = `${process.env.BROWSER_URL}`
-        const sleepMsec = Number(`${process.env.SLEEP_MILLISECOND}`);
-        const pageTimeoutMsec = Number(`${process.env.PAGE_TIMEOUT_MILLISECOND}`);
+        const baseUrl = process.env.BASE_URL
+        const browserUrl = process.env.BROWSER_URL
+        const sleepMsec = Number(process.env.SLEEP_MILLISECOND);
+        const pageTimeoutMsec = Number(process.env.PAGE_TIMEOUT_MILLISECOND);
 
         // 手動でログイン済のブラウザにPuppeteerから接続する。
         // ブラウザ起動コマンド：

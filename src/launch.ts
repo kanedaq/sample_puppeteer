@@ -9,11 +9,11 @@ import * as dotenv from "dotenv"
 
         // .env読み込み
         dotenv.config();
-        const baseUrl = `${process.env.BASE_URL}`
-        const isHeadless = (Number(`${process.env.HIDE_BROWSER}`) != 0);
-        const sleepMsec = Number(`${process.env.SLEEP_MILLISECOND}`);
-        const browserTimeoutMsec = Number(`${process.env.BROWSER_TIMEOUT_MILLISECOND}`);
-        const pageTimeoutMsec = Number(`${process.env.PAGE_TIMEOUT_MILLISECOND}`);
+        const baseUrl = process.env.BASE_URL
+        const isHeadless = (Number(process.env.HIDE_BROWSER) != 0);
+        const sleepMsec = Number(process.env.SLEEP_MILLISECOND);
+        const browserTimeoutMsec = Number(process.env.BROWSER_TIMEOUT_MILLISECOND);
+        const pageTimeoutMsec = Number(process.env.PAGE_TIMEOUT_MILLISECOND);
 
         // Puppeteerを起動
         browserWordpress = await puppeteer.launch({
@@ -36,13 +36,13 @@ import * as dotenv from "dotenv"
         await pageWordpress.waitForTimeout(sleepMsec);
 
         // ユーザー名を入力
-        const wordpressLogin = `${process.env.WORDPRESS_LOGIN}`;
+        const wordpressLogin = process.env.WORDPRESS_LOGIN;
         selector = "#user_login";
         await pageWordpress.evaluate(selector => { document.querySelector(selector).value = ""; }, selector);
         await pageWordpress.type(selector, wordpressLogin);
 
         // パスワードを入力
-        const wordpressPass = `${process.env.WORDPRESS_PASS}`;
+        const wordpressPass = process.env.WORDPRESS_PASS;
         selector = "#user_pass";
         await pageWordpress.evaluate(selector => { document.querySelector(selector).value = ""; }, selector);
         await pageWordpress.type(selector, wordpressPass);
