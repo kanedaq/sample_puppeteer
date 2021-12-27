@@ -6,6 +6,7 @@
   "scripts": {
     "launch": "ts-node src/launch.ts",
     "download": "ts-node src/download.ts",
+    "download_fetch": "ts-node src/download_fetch.ts",
     "connect": "ts-node src/connect.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
