@@ -5,6 +5,7 @@
   "main": "launch.ts",
   "scripts": {
     "launch": "ts-node src/launch.ts",
+    "network": "ts-node src/network.ts",
     "download": "ts-node src/download.ts",
     "download_fetch": "ts-node src/download_fetch.ts",
     "connect": "ts-node src/connect.ts",
