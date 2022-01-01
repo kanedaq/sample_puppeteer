@@ -5,7 +5,7 @@ import * as rp from "request-promise"
 class MyError extends Error {}
 
 (async () => {
-    let browserWordpress: puppeteer.Browser | null = null
+    let browser: puppeteer.Browser | null = null
 
     try {
         let selector: string
@@ -25,14 +25,14 @@ class MyError extends Error {}
         const pageTimeoutMsec = process.env.PAGE_TIMEOUT_MILLISECOND ? Number(process.env.PAGE_TIMEOUT_MILLISECOND) : 0
 
         // Puppeteerを起動
-        browserWordpress = await puppeteer.launch({
+        browser = await puppeteer.launch({
             timeout: browserTimeoutMsec,  // タイムアウト設定
             headless: isHeadless, // Headlessモードで起動するかどうか
             slowMo: 20, // 指定のミリ秒スローモーションで実行する
         })
 
         // 新しい空のページを開く.
-        const pageWordpress: puppeteer.Page = await browserWordpress.newPage()
+        const pageWordpress: puppeteer.Page = await browser.newPage()
         await pageWordpress.setViewport({
             width: 1200,
             height: 800,
@@ -85,8 +85,8 @@ class MyError extends Error {}
     }
     finally {
         // ブラウザを終了
-        if (browserWordpress ?? false) {
-            await browserWordpress.close()
+        if (browser ?? false) {
+            await browser.close()
         }
     }
 })()

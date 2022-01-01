@@ -23,13 +23,13 @@ class MyError extends Error {}
         //     .\chrome --remote-debugging-port=9222
         // ログインページ（あらかじめ手動でログインする）：
         //     http://192.168.1.101:8000/login
-        const browserWordpress = await puppeteer.connect({
+        const browser = await puppeteer.connect({
             browserURL: browserUrl,
             slowMo: 20, // 指定のミリ秒スローモーションで実行する
         })
 
         // 新しい空のページを開く.
-        const pageWordpress: puppeteer.Page = await browserWordpress.newPage()
+        const pageWordpress: puppeteer.Page = await browser.newPage()
         await pageWordpress.setViewport({
             width: 1200,
             height: 800,
