@@ -1,4 +1,4 @@
-import * as puppeteer from "puppeteer";
+import * as puppeteer from "puppeteer"
 import * as dotenv from "dotenv"
 
 async function fetchGetAsText(page: puppeteer.Page, url: string) {
@@ -10,12 +10,12 @@ async function fetchGetAsText(page: puppeteer.Page, url: string) {
                 {
                     method: "GET"
                 }
-            );
+            )
 
             // headers
-            let headers = {};
+            let headers = {}
             for (const hh of response_fetch.headers) {
-                headers[hh[0]] = hh[1];
+                headers[hh[0]] = hh[1]
             }
 
             return {
@@ -37,82 +37,82 @@ async function fetchGetAsText(page: puppeteer.Page, url: string) {
                 "body": e.toString(),
             }
         }
-    }, url);
+    }, url)
 }
 
 (async () => {
-    let browser: puppeteer.Browser | null = null;
+    let browser: puppeteer.Browser | null = null
 
     try {
-        let selector: string;
+        let selector: string
 
         // .env読み込み
-        dotenv.config();
-        const baseUrl = process.env.BASE_URL;
-        const wordpressLogin = process.env.WORDPRESS_LOGIN;
-        const wordpressPass = process.env.WORDPRESS_PASS;
-        const isHeadless = (Number(process.env.HIDE_BROWSER) != 0);
-        const sleepMsec = Number(process.env.SLEEP_MILLISECOND);
-        const browserTimeoutMsec = Number(process.env.BROWSER_TIMEOUT_MILLISECOND);
-        const pageTimeoutMsec = Number(process.env.PAGE_TIMEOUT_MILLISECOND);
+        dotenv.config()
+        const baseUrl = process.env.BASE_URL
+        const wordpressLogin = process.env.WORDPRESS_LOGIN
+        const wordpressPass = process.env.WORDPRESS_PASS
+        const isHeadless = (Number(process.env.HIDE_BROWSER) != 0)
+        const sleepMsec = Number(process.env.SLEEP_MILLISECOND)
+        const browserTimeoutMsec = Number(process.env.BROWSER_TIMEOUT_MILLISECOND)
+        const pageTimeoutMsec = Number(process.env.PAGE_TIMEOUT_MILLISECOND)
 
         // Puppeteerを起動
         browser = await puppeteer.launch({
             timeout: browserTimeoutMsec,  // タイムアウト設定
             headless: isHeadless, // Headlessモードで起動するかどうか
             slowMo: 20, // 指定のミリ秒スローモーションで実行する
-        });
+        })
 
         // 新しい空のページを開く.
-        const pageWordpress: puppeteer.Page = await browser.newPage();
+        const pageWordpress: puppeteer.Page = await browser.newPage()
         await pageWordpress.setViewport({
             width: 1200,
             height: 800,
-        });
-        await pageWordpress.setDefaultNavigationTimeout(pageTimeoutMsec); // タイムアウト設定
+        })
+        await pageWordpress.setDefaultNavigationTimeout(pageTimeoutMsec)    // タイムアウト設定
 
         // ログインページへ
-        const loginUrl = baseUrl + "/login";
-        await pageWordpress.goto(loginUrl, { waitUntil: ["load", "networkidle0"] });
-        await pageWordpress.waitForTimeout(sleepMsec);
+        const loginUrl = baseUrl + "/login"
+        await pageWordpress.goto(loginUrl, { waitUntil: ["load", "networkidle0"] })
+        await pageWordpress.waitForTimeout(sleepMsec)
 
         // ユーザー名を入力
-        selector = "#user_login";
-        await pageWordpress.evaluate(selector => { document.querySelector(selector).value = ""; }, selector);
-        await pageWordpress.type(selector, wordpressLogin);
+        selector = "#user_login"
+        await pageWordpress.evaluate(selector => { document.querySelector(selector).value = "" }, selector)
+        await pageWordpress.type(selector, wordpressLogin)
 
         // パスワードを入力
-        selector = "#user_pass";
-        await pageWordpress.evaluate(selector => { document.querySelector(selector).value = ""; }, selector);
-        await pageWordpress.type(selector, wordpressPass);
+        selector = "#user_pass"
+        await pageWordpress.evaluate(selector => { document.querySelector(selector).value = "" }, selector)
+        await pageWordpress.type(selector, wordpressPass)
 
         // ログインボタンを押す
         // https://qiita.com/hnw/items/a07e6b88d95d1656e02f
-        selector = "#wp-submit";
+        selector = "#wp-submit"
         await Promise.all([
             pageWordpress.waitForNavigation({ waitUntil: ["load", "networkidle0"] }),
             pageWordpress.click(selector),
-        ]);
-        await pageWordpress.waitForTimeout(sleepMsec);
+        ])
+        await pageWordpress.waitForTimeout(sleepMsec)
 
         // ブラウザのJavaScriptで、管理ページ内の任意のURLからhtmlをダウンロード
-        // const uri = baseUrl + "/wp-admin/customize.php?autofocus[panel]=themes";
-        selector = "#welcome-panel > div > div > div:nth-child(1) > p > a";
-        const uri = await pageWordpress.$eval(selector, el => el.getAttribute("href"));
-        const response_download = await fetchGetAsText(pageWordpress, uri);
-        console.log(response_download.body);
-        console.log("----");
-        console.log(response_download.headers);
-        console.log("----");
-        console.log(response_download.status);
+        // const uri = baseUrl + "/wp-admin/customize.php?autofocus[panel]=themes"
+        selector = "#welcome-panel > div > div > div:nth-child(1) > p > a"
+        const uri = await pageWordpress.$eval(selector, el => el.getAttribute("href"))
+        const response_download = await fetchGetAsText(pageWordpress, uri)
+        console.log(response_download.body)
+        console.log("----")
+        console.log(response_download.headers)
+        console.log("----")
+        console.log(response_download.status)
 
         // ログアウト処理は省略した
-        console.log("無事終了");
+        console.log("無事終了")
     }
     finally {
         // ブラウザを終了
         if (browser ?? false) {
-            await browser.close();
+            await browser.close()
         }
     }
-})();
+})()
