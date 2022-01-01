@@ -2,6 +2,8 @@ import * as puppeteer from "puppeteer"
 import * as dotenv from "dotenv"
 import * as rp from "request-promise"
 
+class MyError extends Error {}
+
 (async () => {
     let browserWordpress: puppeteer.Browser | null = null
 
@@ -10,11 +12,17 @@ import * as rp from "request-promise"
 
         // .env読み込み
         dotenv.config()
-        const baseUrl = process.env.BASE_URL
-        const isHeadless = (Number(process.env.HIDE_BROWSER) != 0)
-        const sleepMsec = Number(process.env.SLEEP_MILLISECOND)
-        const browserTimeoutMsec = Number(process.env.BROWSER_TIMEOUT_MILLISECOND)
-        const pageTimeoutMsec = Number(process.env.PAGE_TIMEOUT_MILLISECOND)
+        if (process.env.BASE_URL && process.env.WORDPRESS_LOGIN && process.env.WORDPRESS_PASS) {
+            ;
+        }
+        else {
+            throw new MyError(".envでの指定が不足しています")
+        }
+        const baseUrl = process.env.BASE_URL ?? ""
+        const isHeadless = process.env.HIDE_BROWSER ? (Number(process.env.HIDE_BROWSER) != 0) : true
+        const sleepMsec = process.env.SLEEP_MILLISECOND ? Number(process.env.SLEEP_MILLISECOND) : 2000
+        const browserTimeoutMsec = process.env.BROWSER_TIMEOUT_MILLISECOND ? Number(process.env.BROWSER_TIMEOUT_MILLISECOND) : 0
+        const pageTimeoutMsec = process.env.PAGE_TIMEOUT_MILLISECOND ? Number(process.env.PAGE_TIMEOUT_MILLISECOND) : 0
 
         // Puppeteerを起動
         browserWordpress = await puppeteer.launch({

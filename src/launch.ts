@@ -1,29 +1,39 @@
 import * as puppeteer from "puppeteer"
 import * as dotenv from "dotenv"
 
+class MyError extends Error {}
+
 (async () => {
-    let browserWordpress: puppeteer.Browser | null = null
+    let browser: puppeteer.Browser | null = null
 
     try {
         let selector: string
 
         // .env読み込み
         dotenv.config()
-        const baseUrl = process.env.BASE_URL
-        const isHeadless = (Number(process.env.HIDE_BROWSER) != 0)
-        const sleepMsec = Number(process.env.SLEEP_MILLISECOND)
-        const browserTimeoutMsec = Number(process.env.BROWSER_TIMEOUT_MILLISECOND)
-        const pageTimeoutMsec = Number(process.env.PAGE_TIMEOUT_MILLISECOND)
+        if (process.env.BASE_URL && process.env.WORDPRESS_LOGIN && process.env.WORDPRESS_PASS) {
+            ;
+        }
+        else {
+            throw new MyError(".envでの指定が不足しています")
+        }
+        const baseUrl = process.env.BASE_URL ?? ""
+        const wordpressLogin = process.env.WORDPRESS_LOGIN ?? ""
+        const wordpressPass = process.env.WORDPRESS_PASS ?? ""
+        const isHeadless = process.env.HIDE_BROWSER ? (Number(process.env.HIDE_BROWSER) != 0) : true
+        const sleepMsec = process.env.SLEEP_MILLISECOND ? Number(process.env.SLEEP_MILLISECOND) : 2000
+        const browserTimeoutMsec = process.env.BROWSER_TIMEOUT_MILLISECOND ? Number(process.env.BROWSER_TIMEOUT_MILLISECOND) : 0
+        const pageTimeoutMsec = process.env.PAGE_TIMEOUT_MILLISECOND ? Number(process.env.PAGE_TIMEOUT_MILLISECOND) : 0
 
         // Puppeteerを起動
-        browserWordpress = await puppeteer.launch({
+        browser = await puppeteer.launch({
             timeout: browserTimeoutMsec,  // タイムアウト設定
             headless: isHeadless, // Headlessモードで起動するかどうか
             slowMo: 20, // 指定のミリ秒スローモーションで実行する
         })
 
         // 新しい空のページを開く.
-        const pageWordpress: puppeteer.Page = await browserWordpress.newPage()
+        const pageWordpress: puppeteer.Page = await browser.newPage()
         await pageWordpress.setViewport({
             width: 1200,
             height: 800,
@@ -36,13 +46,11 @@ import * as dotenv from "dotenv"
         await pageWordpress.waitForTimeout(sleepMsec)
 
         // ユーザー名を入力
-        const wordpressLogin = process.env.WORDPRESS_LOGIN
         selector = "#user_login"
         await pageWordpress.evaluate(selector => { document.querySelector(selector).value = "" }, selector)
         await pageWordpress.type(selector, wordpressLogin)
 
         // パスワードを入力
-        const wordpressPass = process.env.WORDPRESS_PASS
         selector = "#user_pass"
         await pageWordpress.evaluate(selector => { document.querySelector(selector).value = "" }, selector)
         await pageWordpress.type(selector, wordpressPass)
@@ -62,8 +70,8 @@ import * as dotenv from "dotenv"
     }
     finally {
         // ブラウザを終了
-        if (browserWordpress ?? false) {
-            await browserWordpress.close()
+        if (browser ?? false) {
+            await browser.close()
         }
     }
 })()
